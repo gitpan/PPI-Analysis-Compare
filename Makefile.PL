@@ -7,6 +7,7 @@ WriteMakefile(
 		# Application dependencies
 		PPI           => '0.817',
 		Data::Compare => '0.10',
+		List::Util    => '1.11',
 
 		# Test dependencies
 		Test::More => 0,

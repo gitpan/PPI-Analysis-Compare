@@ -25,15 +25,10 @@ DESCRIPTION
     stripped out of the structs. Finally a deep Data::Compare is used to
     check that the two sets of lexed code are identical.
 
-    Currently, the removal of various non-signicicant content are the only
-    options available, but over time there may be additional transforms
-    added to this package (or perhaps plugins), so various other language
-    idioms can be tested for equivalency.
-
-    Please note that due to some parts of PPI being incomplete, mainly the
-    PPI::Document scanning/filter engine, this 0.01 does NOT actually strip
-    anything out. So really, currently this module is a placeholder and
-    effectively useless :(
+    Currently, the default set of transforms include removal of
+    non-signicant content, such as whitespace, pod, __END__ and __DATA__
+    sections, etc. It also includes some transforms to change => to , and
+    remove empty statements.
 
 METHODS
   compare $left, $right, option => value, ...
@@ -49,9 +44,7 @@ METHODS
     useful.
 
 TO DO
-    This code is largely completed and should correctly lex and compare two
-    identical files, but without the core scanning/filter PPI::Analysis
-    routines in place, the actual stripping code is incomplete.
+    Document the extention mechanism, and maybe autodetect plugins?
 
 SUPPORT
     Bugs should be reported via the CPAN bug tracker at

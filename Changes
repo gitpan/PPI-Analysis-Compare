@@ -1,5 +1,10 @@
 Revision history for Perl extension PPI::Analysis::Compare
 
+0.03 Mon Jul  5 2004
+	- Refactored into something a bit more extensible
+	- Seperated out end/data/whitespace pruning
+	- Added a transform to remove null statements
+
 0.02 Thu Jul  1 2004
 	- Upgraded to use ::PPI::Node->prune to actually remove the
 	  non-significant stuff.

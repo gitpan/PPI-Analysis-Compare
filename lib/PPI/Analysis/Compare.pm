@@ -13,14 +13,42 @@ package PPI::Analysis::Compare;
 
 use strict;
 use UNIVERSAL 'isa';
-
-use PPI::Lexer    ();
+use List::Util    ();
 use Data::Compare ();
+use PPI::Lexer    ();
+use PPI::Analysis::Compare::Standard ();
 
-use vars qw{$VERSION};
+use vars qw{$VERSION @TRANSFORMS};
 BEGIN {
-	$VERSION = '0.02';
+	$VERSION = '0.03';
+
+	# A normalisation transform is a function that takes a PPI::Document
+	# and transforms it in a way that will leave two document objects
+	# with different content but the same meaning in the same state.
+	@TRANSFORMS = ();
 }
+
+# Register transforms
+sub register_transforms {
+	my $class = shift;
+	foreach my $transform ( @_ ) {
+		# Is it registered already
+		next if List::Util::first { $transform eq $_ } @TRANSFORMS;
+
+		# Does it exist?
+		unless ( defined \&{"$transform"} ) {
+			die "Tried to register non-existant function $transform as a PPI::Analysis::Compare transform";
+		}
+
+		push @TRANSFORMS, $transform;
+	}
+
+	1;
+}
+
+# Call the import method for PPI::Analysis::Compare::Standard to register
+# the standard transforms.
+PPI::Analysis::Compare::Standard->import;
 
 
 
@@ -37,10 +65,8 @@ sub compare {
 	$right = $class->_document_param($right, $options) or return undef;
 
 	# Process both sides
-	foreach my $Document ( $left, $right ) {
-		my $rv = $Document->prune( sub { ! $_[1]->significant } );
-		return undef unless defined $rv;
-	}
+	$class->normalize( $left  )  or return undef;
+	$class->normalize( $right ) or return undef;
 
 	# We should now have two equivalent structs.
 	# Do a recursive compare of the two.
@@ -49,6 +75,20 @@ sub compare {
 		);
 }
 
+sub normalize {
+	my $self = shift;
+	my $Document = isa( $_[0], 'PPI::Document' ) ? shift : return undef;
+
+	# Call each of the transforms in turn
+	my $modifications = 0;
+	foreach my $function ( @TRANSFORMS ) {
+		my $rv = &{"$function"}( $self, $Document );
+		return undef unless defined $rv;
+		$modifications += $rv;
+	}
+
+	$modifications;
+}
 
 
 
@@ -63,9 +103,7 @@ sub _options_param {
 
 	# Apply defaults
 	$options{destructive} = 1 unless defined $options{destructive};
-	foreach ( qw{whitespace comments pod end data} ) {
-		$options{$_} = 0 unless defined $options{$_};
-	}
+	$options{data}        = 0 unless defined $options{data};
 
 	# Clean up values
 	foreach ( keys %options ) {
@@ -139,15 +177,9 @@ comments, POD, __END__ and __DATA__ sections etc are stripped out of the
 structs. Finally a deep Data::Compare is used to check that the two sets of
 lexed code are identical.
 
-Currently, the removal of various non-signicicant content are the only options
-available, but over time there may be additional transforms added to this
-package (or perhaps plugins), so various other language idioms can be tested
-for equivalency.
-
-Please note that due to some parts of PPI being incomplete, mainly the
-PPI::Document scanning/filter engine, this 0.01 does NOT actually strip
-anything out. So really, currently this module is a placeholder and
-effectively useless :(
+Currently, the default set of transforms include removal of non-signicant
+content, such as whitespace, pod, __END__ and __DATA__ sections, etc. It
+also includes some transforms to change => to , and remove empty statements.
 
 =head1 METHODS
 
@@ -165,9 +197,7 @@ The list of options will be documented once this module is actually useful.
 
 =head1 TO DO
 
-This code is largely completed and should correctly lex and compare two
-identical files, but without the core scanning/filter PPI::Analysis routines
-in place, the actual stripping code is incomplete.
+Document the extention mechanism, and maybe autodetect plugins?
 
 =head1 SUPPORT
 
