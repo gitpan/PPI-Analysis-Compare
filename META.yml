@@ -1,0 +1,13 @@
+# http://module-build.sourceforge.net/META-spec.html
+#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
+name:         PPI-Analysis-Compare
+version:      0.01
+version_from: lib/PPI/Analysis/Compare.pm
+installdirs:  site
+requires:
+    Data::Compare:                 0.10
+    PPI:                           0.815
+    Test::More:                    0
+
+distribution_type: module
+generated_by: ExtUtils::MakeMaker version 6.16

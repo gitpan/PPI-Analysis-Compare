@@ -1,0 +1,75 @@
+NAME
+    PPI::Analysis::Compare - Compare two perl documents for equivalence
+
+SYNOPSIS
+      use PPI::Analysis::Compare;
+  
+      # Compare my file to yours, to see if they are functionally equivalent
+      PPI::Analysis::Compare->compare( 'my/file.pl', 'your/file.pl' );
+
+DESCRIPTION
+    The module is part of PPI, but is provided seperately, as is the
+    practice for any non-essential module with additional dependencies.
+
+    The PPI::Analysis::Compare module takes to perl documents, as a file
+    name, raw source or an existing PPI::Tokenizer or PPI::Document object,
+    and compares the two to see if they are functionally identical.
+
+    The two documents (however they are provided) are loaded into fully
+    lexed PPI::Document structures. These are then destructively modified to
+    factor out anything that may have different content but be functionally
+    equivalent.
+
+    Initially, this means that all non-significant items, such as
+    whitespace, comments, POD, __END__ and __DATA__ sections etc are
+    stripped out of the structs. Finally a deep Data::Compare is used to
+    check that the two sets of lexed code are identical.
+
+    Currently, the removal of various non-signicicant content are the only
+    options available, but over time there may be additional transforms
+    added to this package (or perhaps plugins), so various other language
+    idioms can be tested for equivalency.
+
+    Please note that due to some parts of PPI being incomplete, mainly the
+    PPI::Document scanning/filter engine, this 0.01 does NOT actually strip
+    anything out. So really, currently this module is a placeholder and
+    effectively useless :(
+
+METHODS
+  compare $left, $right, option => value, ...
+    For the time being, PPI::Analysis::Compare provides only the "compare"
+    method. The first two arguments are the left and right comparitors.
+
+    Each comparitor can be either a PPI::Document or PPI::Tokenzier object,
+    a file name, or a reference to a scalar containing raw perl source code.
+    Each comparitor will be loaded, tokenized and lexed as needed to get two
+    PPI::Document objects for comparison.
+
+    The list of options will be documented once this module is actually
+    useful.
+
+TO DO
+    This code is largely completed and should correctly lex and compare two
+    identical files, but without the core scanning/filter PPI::Analysis
+    routines in place, the actual stripping code is incomplete.
+
+SUPPORT
+    Bugs should be reported via the CPAN bug tracker at
+
+      http://rt.cpan.org/NoAuth/ReportBug.html?Queue=PPI%3A%3AAnalysis%3A%3Compare
+
+    For other issues, contact the author
+
+AUTHORS
+            Adam Kennedy ( maintainer )
+            cpan@ali.as
+            http://ali.as/
+
+COPYRIGHT
+    Copyright (c) 2004 Adam Kennedy. All rights reserved. This program is
+    free software; you can redistribute it and/or modify it under the same
+    terms as Perl itself.
+
+    The full text of the license can be found in the LICENSE file included
+    with this module.
+

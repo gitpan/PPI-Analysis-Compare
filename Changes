@@ -1,0 +1,4 @@
+Revision history for Perl extension PPI::Analysis::Compare
+
+0.01 Tue Jun 29 2004
+	- Created the guts of the module, but waiting for PPI scanning/filter engine
