@@ -1,4 +1,8 @@
 Revision history for Perl extension PPI::Analysis::Compare
 
+0.02 Thu Jul  1 2004
+	- Upgraded to use ::PPI::Node->prune to actually remove the
+	  non-significant stuff.
+
 0.01 Tue Jun 29 2004
 	- Created the guts of the module, but waiting for PPI scanning/filter engine

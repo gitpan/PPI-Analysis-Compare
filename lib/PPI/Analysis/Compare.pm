@@ -19,7 +19,7 @@ use Data::Compare ();
 
 use vars qw{$VERSION};
 BEGIN {
-	$VERSION = '0.01';
+	$VERSION = '0.02';
 }
 
 
@@ -38,7 +38,8 @@ sub compare {
 
 	# Process both sides
 	foreach my $Document ( $left, $right ) {
-		# Do stuff here
+		my $rv = $Document->prune( sub { ! $_[1]->significant } );
+		return undef unless defined $rv;
 	}
 
 	# We should now have two equivalent structs.

@@ -5,7 +5,7 @@ WriteMakefile(
 	'VERSION_FROM' => 'lib/PPI/Analysis/Compare.pm',
 	'PREREQ_PM'    => {
 		# Application dependencies
-		PPI           => '0.815',
+		PPI           => '0.817',
 		Data::Compare => '0.10',
 
 		# Test dependencies
